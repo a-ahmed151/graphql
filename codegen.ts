@@ -8,7 +8,8 @@ const config: CodegenConfig = {
     './src/graphql/': {
       preset: 'client',
       config: {
-        documentMode: 'string'
+        documentMode: 'string',
+        useTypeImports: true
       }
     },
     './schema.graphql': {

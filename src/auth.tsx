@@ -17,6 +17,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [userToken, setUserToken] = useState<string | null>(
     sessionStorage.getItem("jwt"),
   );
+
   const isAuthenticated = !!userToken;
 
   const logout = () => {
@@ -30,9 +31,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Basic ${btoa(`${email}:${password}`)}`,
+          Authorization: `Basic ${btoa(`${email}:${password}`)}`,
         },
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({ email, password }),
       });
       const result: loginRepsonse = await response.json();
       if (typeof result === "string") {
@@ -50,17 +51,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, userToken, login, logout }}>
+    <AuthContext.Provider
+      value={{ isAuthenticated, userToken, login, logout }}
+    >
       {children}
     </AuthContext.Provider>
   );
 };
 
-
 export const useAuth = () => {
-    const context = useContext(AuthContext)
-    if (!context) {
-        throw new Error(`useAuth must be used within an AuthProvider`)
-    }
-    return context
-}
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error(`useAuth must be used within an AuthProvider`);
+  }
+  return context;
+};

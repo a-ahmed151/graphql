@@ -34,7 +34,9 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@0no-co/graphqlsp": "^1.15.2",
     "@graphql-codegen/cli": "^6.1.1",
+    "@graphql-codegen/schema-ast": "^5.0.0",
     "@parcel/watcher": "^2.5.6",
     "@tanstack/devtools-vite": "^0.3.11",
     "@testing-library/dom": "^10.4.0",
