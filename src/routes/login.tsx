@@ -5,12 +5,15 @@ import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginForm } from "@/components/login-form";
 
+const fallback = "/profile";
+
 export const Route = createFileRoute("/login")({
-    beforeLoad:({context})=> {
-        if (context.auth.isAuthenticated) {
-            throw redirect({to:'/profile'})
-        }
-    },
+  validateSearch: z.object({ redirect: z.string().optional().catch("") }),
+  beforeLoad: ({ context, search }) => {
+    if (context.auth.isAuthenticated) {
+      throw redirect({ to: search.redirect || fallback });
+    }
+  },
   component: RouteComponent,
 });
 
