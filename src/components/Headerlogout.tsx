@@ -1,6 +1,6 @@
 import { Button } from "./ui/button";
 
-export const Header = ({logoutHandler,...props}: {logoutHandler:() => void}) => {
+export const HeaderLogout = ({logoutHandler,...props}: {logoutHandler:() => void}) => {
   return (
     <header>
       Header Component

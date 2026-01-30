@@ -4,14 +4,14 @@ import { useState, createContext, useContext } from "react";
 export interface AuthContext {
   isAuthenticated: boolean;
   userToken: string | null;
-  login: (email: string, password: string) => Promise<boolean>;
+  login: (email: string, password: string) => Promise<string>;
   logout: () => void;
 }
 
 export const AuthContext = createContext<AuthContext | undefined>(undefined);
 
 const loginURL = "https://learn.reboot01.com/api/auth/signin";
-type loginRepsonse = string | { errors: string };
+type loginRepsonse = string | { error: string };
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [userToken, setUserToken] = useState<string | null>(
@@ -25,7 +25,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUserToken(null);
   };
 
-  const login = async (email: string, password: string): Promise<boolean> => {
+  const login = async (email: string, password: string): Promise<string> => {
     try {
       const response = await fetch(loginURL, {
         method: "POST",
@@ -39,21 +39,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (typeof result === "string") {
         setUserToken(result);
         sessionStorage.setItem("jwt", result);
-        return true;
-      } else {
-        alert(result?.errors);
-        return false;
+        return "";
+      }else {
+        return JSON.stringify(result.error)
       }
-    } catch (error) {
-      console.error(error);
-      return false;
+    } catch (err) {
+      console.error(err);
+      return JSON.stringify(err);
     }
   };
 
   return (
-    <AuthContext.Provider
-      value={{ isAuthenticated, userToken, login, logout }}
-    >
+    <AuthContext.Provider value={{ isAuthenticated, userToken, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

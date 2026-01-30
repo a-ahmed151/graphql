@@ -17281,10 +17281,41 @@ export type Xp_View_Variance_Order_By = {
   userId?: InputMaybe<Order_By>;
 };
 
-export type UserinfoQueryVariables = Exact<{ [key: string]: never; }>;
+export type UserIDsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type UserinfoQuery = { __typename?: 'query_root', user: Array<{ __typename?: 'user', id: number, login: string, email?: string | null, campus?: string | null, profile: any, lastName?: string | null, firstName?: string | null, avatarUrl?: string | null, auditRatio?: any | null, totalUp?: any | null, totalUpBonus?: any | null, totalDown?: any | null, roles: Array<{ __typename?: 'user_roles_view', slug?: string | null }>, labels: Array<{ __typename?: 'label_user', labelName?: string | null, labelId: number, eventId?: number | null }>, records: Array<{ __typename?: 'record', startAt: any, endAt?: any | null, message: string, createdAt: any, type: { __typename?: 'record_type', canAccessPlatform: boolean, isPermanent: boolean, canBeAuditor: boolean, label: string, type: string } }>, transactions: Array<{ __typename?: 'transaction', type: string, amount: any }> }> };
+export type UserIDsQuery = { __typename?: 'query_root', user: Array<{ __typename?: 'user', firstName?: string | null, lastName?: string | null, login: string, id: number, labels: Array<{ __typename?: 'label_user', eventId?: number | null }> }> };
+
+export type UserInfoQueryVariables = Exact<{
+  userId: Scalars['Int']['input'];
+}>;
+
+
+export type UserInfoQuery = { __typename?: 'query_root', user?: { __typename?: 'user', id: number, login: string, attrs: any, email?: string | null, campus?: string | null, profile: any, lastName?: string | null, firstName?: string | null, avatarUrl?: string | null, auditRatio?: any | null, totalUp?: any | null, totalUpBonus?: any | null, totalDown?: any | null, roles: Array<{ __typename?: 'user_roles_view', slug?: string | null }>, labels: Array<{ __typename?: 'label_user', labelName?: string | null, labelId: number, eventId?: number | null }>, records: Array<{ __typename?: 'record', startAt: any, endAt?: any | null, message: string, createdAt: any, type: { __typename?: 'record_type', canAccessPlatform: boolean, isPermanent: boolean, canBeAuditor: boolean, label: string, type: string } }>, transactions: Array<{ __typename?: 'transaction', type: string, amount: any }> } | null };
+
+export type UserXpAndLevelQueryVariables = Exact<{
+  userId: Scalars['Int']['input'];
+  rootEventId: Scalars['Int']['input'];
+}>;
+
+
+export type UserXpAndLevelQuery = { __typename?: 'query_root', xp: { __typename?: 'transaction_aggregate', aggregate?: { __typename?: 'transaction_aggregate_fields', sum?: { __typename?: 'transaction_sum_fields', amount?: any | null } | null } | null }, level: Array<{ __typename?: 'transaction', amount: any }> };
+
+export type UserProjectProgressQueryVariables = Exact<{
+  userId: Scalars['Int']['input'];
+  eventId: Scalars['Int']['input'];
+}>;
+
+
+export type UserProjectProgressQuery = { __typename?: 'query_root', group: Array<{ __typename?: 'group', id: number, path: string, status: Group_Status_Enum, captainLogin?: string | null, captainId: number, updatedAt: any, canceledAt?: any | null, cancelReason?: string | null, startedWorkingAt?: any | null, members: Array<{ __typename?: 'group_user', id: number, userId: number, userLogin?: string | null, userAuditRatio?: any | null, accepted?: boolean | null, createdAt: any, updatedAt: any, answeredAt?: any | null, user?: { __typename?: 'user_public_view', firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } | null }> }> };
+
+export type PendingAuditsQueryVariables = Exact<{
+  userId: Scalars['Int']['input'];
+  campus: Scalars['String']['input'];
+}>;
+
+
+export type PendingAuditsQuery = { __typename?: 'query_root', audit: Array<{ __typename?: 'audit', id: number, createdAt: any, endAt?: any | null, version?: string | null, grade?: any | null, closureType?: Audit_Closure_Type_Enum | null, group: { __typename?: 'group', id: number, path: string, captainLogin?: string | null, captain?: { __typename?: 'user_public_view', canAccessPlatform?: boolean | null } | null, members_aggregate: { __typename?: 'group_user_aggregate', aggregate?: { __typename?: 'group_user_aggregate_fields', count: number } | null }, event?: { __typename?: 'event', id: number } | null }, private?: { __typename?: 'audit_private', code?: string | null } | null }> };
 
 export class TypedDocumentString<TResult, TVariables>
   extends String
@@ -17305,11 +17336,25 @@ export class TypedDocumentString<TResult, TVariables>
   }
 }
 
-export const UserinfoDocument = new TypedDocumentString(`
-    query USERINFO {
+export const UserIDsDocument = new TypedDocumentString(`
+    query UserIDs {
   user {
+    firstName
+    lastName
+    login
+    id
+    labels {
+      eventId
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<UserIDsQuery, UserIDsQueryVariables>;
+export const UserInfoDocument = new TypedDocumentString(`
+    query UserInfo($userId: Int!) {
+  user: user_by_pk(id: $userId) {
     id
     login
+    attrs
     email
     campus
     profile
@@ -17341,10 +17386,100 @@ export const UserinfoDocument = new TypedDocumentString(`
         type
       }
     }
-    transactions(order_by: [{type: desc}, {amount: desc}], distinct_on: [type]) {
+    transactions(
+      order_by: [{type: desc}, {amount: desc}]
+      distinct_on: [type]
+      where: {userId: {_eq: $userId}, type: {_like: "skill_%"}}
+    ) {
       type
       amount
     }
   }
 }
-    `) as unknown as TypedDocumentString<UserinfoQuery, UserinfoQueryVariables>;
+    `) as unknown as TypedDocumentString<UserInfoQuery, UserInfoQueryVariables>;
+export const UserXpAndLevelDocument = new TypedDocumentString(`
+    query UserXpAndLevel($userId: Int!, $rootEventId: Int!) {
+  xp: transaction_aggregate(
+    where: {userId: {_eq: $userId}, type: {_eq: "xp"}, eventId: {_eq: $rootEventId}}
+  ) {
+    aggregate {
+      sum {
+        amount
+      }
+    }
+  }
+  level: transaction(
+    limit: 1
+    order_by: {amount: desc}
+    where: {userId: {_eq: $userId}, type: {_eq: "level"}, eventId: {_eq: $rootEventId}}
+  ) {
+    amount
+  }
+}
+    `) as unknown as TypedDocumentString<UserXpAndLevelQuery, UserXpAndLevelQueryVariables>;
+export const UserProjectProgressDocument = new TypedDocumentString(`
+    query UserProjectProgress($userId: Int!, $eventId: Int!) {
+  group(
+    where: {members: {userId: {_eq: $userId}}, _or: [{eventId: {_eq: $eventId}}, {event: {parentId: {_eq: $eventId}}}]}
+  ) {
+    id
+    path
+    status
+    captainLogin
+    captainId
+    members {
+      id
+      userId
+      userLogin
+      userAuditRatio
+      accepted
+      createdAt
+      updatedAt
+      answeredAt
+      user {
+        firstName
+        lastName
+        avatarUrl
+      }
+    }
+    updatedAt
+    canceledAt
+    cancelReason
+    startedWorkingAt
+  }
+}
+    `) as unknown as TypedDocumentString<UserProjectProgressQuery, UserProjectProgressQueryVariables>;
+export const PendingAuditsDocument = new TypedDocumentString(`
+    query PendingAudits($userId: Int!, $campus: String!) {
+  audit(
+    where: {group: {campus: {_eq: $campus}}, grade: {_is_null: true}, resultId: {_is_null: true}, auditorId: {_eq: $userId}, private: {code: {_is_null: false}}}
+    order_by: {endAt: asc_nulls_last, createdAt: asc}
+  ) {
+    id
+    group {
+      id
+      path
+      captainLogin
+      captain {
+        canAccessPlatform
+      }
+      members_aggregate {
+        aggregate {
+          count
+        }
+      }
+      event {
+        id
+      }
+    }
+    private {
+      code
+    }
+    createdAt
+    endAt
+    version
+    grade
+    closureType
+  }
+}
+    `) as unknown as TypedDocumentString<PendingAuditsQuery, PendingAuditsQueryVariables>;

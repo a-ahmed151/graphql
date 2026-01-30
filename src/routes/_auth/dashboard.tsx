@@ -1,6 +1,6 @@
 import { GRAPHQL_API } from "@/api/queries/user";
 import { useAuth } from "@/auth";
-import { Header } from "@/components/Header";
+import { Header } from "@/components/Headerlogout";
 import { UserinfoDocument, type UserinfoQuery } from "@/graphql/graphql";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";

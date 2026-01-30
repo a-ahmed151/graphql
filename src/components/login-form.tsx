@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/card"
 import {
   Field,
-  FieldDescription,
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field"
@@ -19,10 +18,12 @@ export function LoginForm({
   className,
   onSubmit,
   register,
+  errors,
   ...props
 }: React.ComponentProps<"div"> & {
   onSubmit: (e: React.FormEvent) => void;
   register: any;
+  errors?: any;
 }) {
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -45,12 +46,18 @@ export function LoginForm({
                   required
                   {...register("email")}
                 />
+                {errors?.email && (
+                  <p className="text-red-600 text-sm mt-1">{errors.email.message}</p>
+                )}
               </Field>
               <Field>
                 <div className="flex items-center">
                   <FieldLabel htmlFor="password">Password</FieldLabel>
                 </div>
-                <Input id="password" type="password" required {...register("password")} />
+                <Input id="password" type="password" placeholder="Enter your password" required {...register("password")} />
+                {errors?.password && (
+                  <p className="text-red-600 text-sm mt-1">{errors.password.message}</p>
+                )}
               </Field>
               <Field>
                 <Button type="submit">Login</Button>
