@@ -2,7 +2,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { LogOut, Trophy, TrendingUp } from "lucide-react";
+import { LogOut, Trophy } from "lucide-react";
 import { AuditRatioChart } from "@/components/AuditRatioChart";
 import { XPProgressionChart } from "@/components/XPProgressionChart";
 import { ProjectSuccessChart } from "@/components/ProjectSuccessChart";
@@ -18,10 +18,10 @@ import {
   type UserInfoQuery,
   UserXpAndLevelDocument,
   type UserXpAndLevelQuery,
-  UserProjectProgressDocument,
-  type UserProjectProgressQuery,
   PendingAuditsDocument,
   type PendingAuditsQuery,
+  type ProjectXpTransactionsQuery,
+  ProjectXpTransactionsDocument,
 } from "@/graphql/graphql";
 import { GRAPHQL_API } from "@/api/queries/user";
 import { useQuery } from "@tanstack/react-query";
@@ -43,7 +43,12 @@ function RouteComponent() {
   const { data: idsData } = useQuery<UserIDsQuery>({
     queryKey: ["userIDs"],
     queryFn: async () =>
-      request(GRAPHQL_API, UserIDsDocument, {}, { Authorization: `Bearer ${userToken}` }),
+      request(
+        GRAPHQL_API,
+        UserIDsDocument,
+        {},
+        { Authorization: `Bearer ${userToken}` },
+      ),
     enabled: !!userToken,
   });
 
@@ -69,14 +74,20 @@ function RouteComponent() {
 
   // Pick the first user and first label.eventId as requested
   const firstUser = idsData?.user?.[0];
-  const firstUserName = `${firstUser?.firstName ?? ""} ${firstUser?.lastName ?? ""}`.trim();
+  const firstUserName =
+    `${firstUser?.firstName ?? ""} ${firstUser?.lastName ?? ""}`.trim();
   const selectedUserId = firstUser?.id;
   const rootEventId = firstUser?.labels?.[0]?.eventId;
 
   const { data: userInfoData } = useQuery<UserInfoQuery>({
     queryKey: ["userInfo", selectedUserId],
     queryFn: async () =>
-      request(GRAPHQL_API, UserInfoDocument, { userId: selectedUserId as number }, { Authorization: `Bearer ${userToken}` }),
+      request(
+        GRAPHQL_API,
+        UserInfoDocument,
+        { userId: selectedUserId as number },
+        { Authorization: `Bearer ${userToken}` },
+      ),
     enabled: !!userToken && !!selectedUserId,
   });
 
@@ -84,7 +95,10 @@ function RouteComponent() {
   const attrsRaw = userInfoData?.user?.attrs as any;
   let parsedAttrs: any;
   try {
-    parsedAttrs = attrsRaw && typeof attrsRaw === "string" ? JSON.parse(attrsRaw) : attrsRaw;
+    parsedAttrs =
+      attrsRaw && typeof attrsRaw === "string"
+        ? JSON.parse(attrsRaw)
+        : attrsRaw;
   } catch (e) {
     parsedAttrs = undefined;
   }
@@ -110,18 +124,21 @@ function RouteComponent() {
       request(
         GRAPHQL_API,
         UserXpAndLevelDocument,
-        { userId: selectedUserId as number, rootEventId: rootEventId as number },
+        {
+          userId: selectedUserId as number,
+          rootEventId: rootEventId as number,
+        },
         { Authorization: `Bearer ${userToken}` },
       ),
     enabled: !!selectedUserId && !!rootEventId && !!userToken,
   });
 
-  const { data: _projectProgressData } = useQuery<UserProjectProgressQuery>({
+  const { data: projectProgressData } = useQuery<ProjectXpTransactionsQuery>({
     queryKey: ["projectProgress", selectedUserId, rootEventId],
     queryFn: async () =>
       request(
         GRAPHQL_API,
-        UserProjectProgressDocument,
+        ProjectXpTransactionsDocument,
         { userId: selectedUserId as number, eventId: rootEventId as number },
         { Authorization: `Bearer ${userToken}` },
       ),
@@ -145,28 +162,46 @@ function RouteComponent() {
   const fetchedUserData = {
     id: selectedUserId ?? mockUserData.id,
     login: firstUser?.login ?? userInfoData?.user?.login ?? mockUserData.login,
-    name:firstUserName || userInfoData?.user ? `${userInfoData?.user?.firstName ?? ""} ${userInfoData?.user?.lastName ?? ""}`.trim() : mockUserData.login,
+    name:
+      firstUserName || userInfoData?.user
+        ? `${userInfoData?.user?.firstName ?? ""} ${userInfoData?.user?.lastName ?? ""}`.trim()
+        : mockUserData.login,
     rank: 1,
-    totalXP: xpData?.xp?.aggregate?.sum?.amount ?? userInfoData?.user?.totalUp ?? mockUserData.totalXP,
+    totalXP:
+      xpData?.xp?.aggregate?.sum?.amount ??
+      userInfoData?.user?.totalUp ??
+      mockUserData.totalXP,
     level: xpData?.level?.[0]?.amount ?? mockUserData.level,
     auditUp: userInfoData?.user?.totalUp ?? mockUserData.auditUp,
+    auditUpBonus: userInfoData?.user?.totalUpBonus ?? 0,
     auditDown: userInfoData?.user?.totalDown ?? mockUserData.auditDown,
     countryCode: countryCodeData ?? mockUserData.countryCode,
     skills:
       (userInfoData?.user?.transactions ?? []).map((t) => ({
         name: (t.type ?? "").replace(/^skill_/, ""),
-        level: Math.min(10, Math.max(1, Math.round(((t.amount as number) ?? 0) / 1000))),
+        level: t.amount + "%",
       })) ?? mockUserData.skills,
   };
 
+  const projectsData = (projectProgressData?.transaction ?? []).map(
+    (tx: { amount: number; path: string }) => ({
+      amount: formatBytes(tx.amount, 1),
+      name: tx.path.split("/").pop() || tx.path,
+    }),
+  );
   const userData = {
     ...mockUserData,
     ...fetchedUserData,
-    skills: (fetchedUserData.skills && fetchedUserData.skills.length > 0) ? fetchedUserData.skills : mockUserData.skills,
+    projectProgressData: projectsData,
+    skills:
+      fetchedUserData.skills && fetchedUserData.skills.length > 0
+        ? fetchedUserData.skills
+        : mockUserData.skills,
   };
 
   // Show a simple loading state while initial IDs are being fetched
-  if (!idsData && userToken) return <div className="p-4">Loading profile...</div>;
+  if (!idsData && userToken)
+    return <div className="p-4">Loading profile...</div>;
 
   const mockXPProgression = [
     { date: "Jan", xp: 45000 },
@@ -257,7 +292,7 @@ function RouteComponent() {
                 </svg>
               </div>
               <span className="text-xl font-semibold text-white">
-                z01 Platform
+                GraphQL by Abdelrahman
               </span>
             </div>
 
@@ -267,9 +302,7 @@ function RouteComponent() {
                 <div className="text-sm text-zinc-100 font-medium">
                   {userData.login}
                 </div>
-                <div className="text-xs text-zinc-400">
-                  ID: {userData.id}
-                </div>
+                <div className="text-xs text-zinc-400">ID: {userData.id}</div>
               </div>
               <Button
                 onClick={handleLogout}
@@ -321,18 +354,6 @@ function RouteComponent() {
                   <p className="text-zinc-400 mb-4">
                     Student Developer • Level {userData.level}
                   </p>
-
-                  <div className="inline-flex items-center gap-2 bg-[#18181b] border border-[#27272a] rounded-lg px-6 py-3">
-                    <TrendingUp className="size-5 text-indigo-400" />
-                    <div>
-                      <div className="text-xs text-zinc-400 uppercase tracking-wide">
-                        Total XP
-                      </div>
-                      <div className="text-3xl font-extrabold text-white">
-                        {formatBytes(userData.totalXP)}
-                      </div>
-                    </div>
-                  </div>
                 </div>
               </div>
             </CardContent>
@@ -345,10 +366,11 @@ function RouteComponent() {
           <AuditRatioChart
             auditUp={userData.auditUp}
             auditDown={userData.auditDown}
+            auditUpBonus={userData.auditUpBonus}
           />
 
           {/* Level/Grades */}
-          <Card className="bg-[#18181b] border-[#27272a] hover:border-[#3f3f46] transition-colors">
+          <Card className="bg-[#18181b] border-[#27272a] hover:border-[#3f3f46] transition-colors ">
             <CardHeader>
               <CardTitle className="text-zinc-100">Level & Progress</CardTitle>
             </CardHeader>
@@ -359,23 +381,9 @@ function RouteComponent() {
                   {userData.level}
                 </span>
               </div>
-
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="text-zinc-400">
-                    Progress to Level {mockUserData.level + 1}
-                  </span>
-                  <span className="text-zinc-200">68%</span>
-                </div>
-                <div className="h-3 bg-[#27272a] rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-linear-to-r from-indigo-500 to-purple-500"
-                    style={{ width: "68%" }}
-                  />
-                </div>
-              </div>
-
-              <div className="pt-4 space-y-2">
+            </CardContent>
+            <CardContent className="mt-auto pb-10">
+              <div className="pt-4 space-y-2 ">
                 <div className="flex justify-between text-sm">
                   <span className="text-zinc-400">Projects Completed</span>
                   <span className="text-zinc-100 font-semibold">47</span>
@@ -387,7 +395,42 @@ function RouteComponent() {
               </div>
             </CardContent>
           </Card>
-
+          {/*Last Activity*/}
+          <Card className="bg-[#18181b] border-[#27272a] hover:border-[#3f3f46] transition-colors ">
+            <CardHeader>
+              <CardTitle className="text-zinc-100">Last activity</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex justify-between mb-4">
+                <span className="text-zinc-400">Recent Projects</span>
+                <span className="text-zinc-100 font-semibold">
+                  XP Earned
+                </span>
+              </div>
+              <div className="text-white">
+                {formatBytes(userData.totalXP)} XP
+              </div>
+            </CardContent>
+            <CardContent>
+              {userData.projectProgressData.length > 0 ? (
+                <ul className="space-y-3">
+                  {userData.projectProgressData.map((proj) => (
+                    <li
+                      key={proj.name}
+                      className="flex justify-between text-sm"
+                    >
+                      <span className="text-zinc-400">{proj.name}</span>
+                      <span className="text-zinc-100 font-semibold">
+                        {proj.amount} XP
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-zinc-400">No recent activity.</p>
+              )}
+            </CardContent>
+          </Card>
           {/* Skills */}
           <Card className="bg-[#18181b] border-[#27272a] hover:border-[#3f3f46] transition-colors">
             <CardHeader>

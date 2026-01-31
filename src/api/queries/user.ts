@@ -81,36 +81,20 @@ export const UserXpAndLevelQuery = graphql(`query UserXpAndLevel($userId: Int!, 
   }
 }`)
 
-export const UserProjectProgressQuery = graphql(`query UserProjectProgress($userId: Int!, $eventId: Int!) {
-  group(
-    where: {members: {userId: {_eq: $userId}}, _or: [{eventId: {_eq: $eventId}}, {event: {parentId: {_eq: $eventId}}}]}
+export const UserProjectProgressQuery = graphql(`query ProjectXpTransactions($userId: Int!, $eventId: Int!) {
+  transaction(
+    where: { userId: { _eq: $userId }, type: { _eq: "xp" }, eventId: { _eq: $eventId } }
+    order_by: { createdAt: desc }   # newest first
+    limit: 5
   ) {
     id
+    amount
+    eventId
     path
-    status
-    captainLogin
-    captainId
-    members {
-      id
-      userId
-      userLogin
-      userAuditRatio
-      accepted
-      createdAt
-      updatedAt
-      answeredAt
-      user {
-        firstName
-        lastName
-        avatarUrl
-      }
-    }
-    updatedAt
-    canceledAt
-    cancelReason
-    startedWorkingAt
+    createdAt
   }
-}`)
+}
+`)
 
 export const PendingAuditsQuery = graphql(`query PendingAudits($userId: Int!, $campus: String!) {
   audit(

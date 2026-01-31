@@ -19,11 +19,13 @@ export function LoginForm({
   onSubmit,
   register,
   errors,
+  isSubmitting,
   ...props
 }: React.ComponentProps<"div"> & {
   onSubmit: (e: React.FormEvent) => void;
   register: any;
   errors?: any;
+  isSubmitting?: boolean;
 }) {
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -60,7 +62,7 @@ export function LoginForm({
                 )}
               </Field>
               <Field>
-                <Button type="submit">Login</Button>
+                <Button type="submit" disabled={isSubmitting}>{isSubmitting ? "Logging in..." : "Login"}</Button>
               </Field>
             </FieldGroup>
           </form>

@@ -26,7 +26,11 @@ const schema = z.object({
 type FormInputs = z.infer<typeof schema>;
 
 function RouteComponent() {
-  const { register, handleSubmit, formState: { errors } } = useForm<FormInputs>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors,isSubmitting },
+  } = useForm<FormInputs>({
     resolver: zodResolver(schema),
   });
   const [loginError, setLoginError] = useState<string>("");
@@ -54,6 +58,7 @@ function RouteComponent() {
         onSubmit={handleSubmit(onSubmit)}
         register={register}
         errors={errors}
+        isSubmitting={isSubmitting}
       />
     </div>
   );

@@ -17301,13 +17301,13 @@ export type UserXpAndLevelQueryVariables = Exact<{
 
 export type UserXpAndLevelQuery = { __typename?: 'query_root', xp: { __typename?: 'transaction_aggregate', aggregate?: { __typename?: 'transaction_aggregate_fields', sum?: { __typename?: 'transaction_sum_fields', amount?: any | null } | null } | null }, level: Array<{ __typename?: 'transaction', amount: any }> };
 
-export type UserProjectProgressQueryVariables = Exact<{
+export type ProjectXpTransactionsQueryVariables = Exact<{
   userId: Scalars['Int']['input'];
   eventId: Scalars['Int']['input'];
 }>;
 
 
-export type UserProjectProgressQuery = { __typename?: 'query_root', group: Array<{ __typename?: 'group', id: number, path: string, status: Group_Status_Enum, captainLogin?: string | null, captainId: number, updatedAt: any, canceledAt?: any | null, cancelReason?: string | null, startedWorkingAt?: any | null, members: Array<{ __typename?: 'group_user', id: number, userId: number, userLogin?: string | null, userAuditRatio?: any | null, accepted?: boolean | null, createdAt: any, updatedAt: any, answeredAt?: any | null, user?: { __typename?: 'user_public_view', firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } | null }> }> };
+export type ProjectXpTransactionsQuery = { __typename?: 'query_root', transaction: Array<{ __typename?: 'transaction', id: number, amount: any, eventId?: number | null, path: string, createdAt: any }> };
 
 export type PendingAuditsQueryVariables = Exact<{
   userId: Scalars['Int']['input'];
@@ -17417,38 +17417,21 @@ export const UserXpAndLevelDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<UserXpAndLevelQuery, UserXpAndLevelQueryVariables>;
-export const UserProjectProgressDocument = new TypedDocumentString(`
-    query UserProjectProgress($userId: Int!, $eventId: Int!) {
-  group(
-    where: {members: {userId: {_eq: $userId}}, _or: [{eventId: {_eq: $eventId}}, {event: {parentId: {_eq: $eventId}}}]}
+export const ProjectXpTransactionsDocument = new TypedDocumentString(`
+    query ProjectXpTransactions($userId: Int!, $eventId: Int!) {
+  transaction(
+    where: {userId: {_eq: $userId}, type: {_eq: "xp"}, eventId: {_eq: $eventId}}
+    order_by: {createdAt: desc}
+    limit: 5
   ) {
     id
+    amount
+    eventId
     path
-    status
-    captainLogin
-    captainId
-    members {
-      id
-      userId
-      userLogin
-      userAuditRatio
-      accepted
-      createdAt
-      updatedAt
-      answeredAt
-      user {
-        firstName
-        lastName
-        avatarUrl
-      }
-    }
-    updatedAt
-    canceledAt
-    cancelReason
-    startedWorkingAt
+    createdAt
   }
 }
-    `) as unknown as TypedDocumentString<UserProjectProgressQuery, UserProjectProgressQueryVariables>;
+    `) as unknown as TypedDocumentString<ProjectXpTransactionsQuery, ProjectXpTransactionsQueryVariables>;
 export const PendingAuditsDocument = new TypedDocumentString(`
     query PendingAudits($userId: Int!, $campus: String!) {
   audit(

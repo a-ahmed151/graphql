@@ -1,11 +1,13 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { formatBytes } from '@/lib/utils';
 
 interface AuditRatioChartProps {
   auditUp: number;
   auditDown: number;
+  auditUpBonus: number;
 }
 
-export function AuditRatioChart({ auditUp, auditDown }: AuditRatioChartProps) {
+export function AuditRatioChart({ auditUp, auditDown, auditUpBonus }: AuditRatioChartProps) {
   const total = auditUp + auditDown;
   const upPercentage = (auditUp / total) * 100;
   const downPercentage = (auditDown / total) * 100;
@@ -79,14 +81,14 @@ export function AuditRatioChart({ auditUp, auditDown }: AuditRatioChartProps) {
             <div className="size-3 rounded-full bg-green-500" />
             <div className="text-sm">
               <div className="text-zinc-400">Audit Up</div>
-              <div className="text-white font-semibold">{(auditUp / 1024 / 1024).toFixed(2)} MB</div>
+              <div className="text-white font-semibold">{formatBytes(auditUp - auditUpBonus,2)} <span className="text-zinc-400">+{formatBytes(auditUpBonus,1)}</span></div>
             </div>
           </div>
           <div className="flex items-center gap-2">
             <div className="size-3 rounded-full bg-red-500" />
             <div className="text-sm">
               <div className="text-zinc-400">Audit Down</div>
-              <div className="text-white font-semibold">{(auditDown / 1024 / 1024).toFixed(2)} MB</div>
+              <div className="text-white font-semibold">{formatBytes(auditDown,2)}</div>
             </div>
           </div>
         </div>
