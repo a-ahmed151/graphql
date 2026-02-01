@@ -1,5 +1,6 @@
 import { DigitalCard } from "@/components/DigitalCard";
 import { LogOut, Zap, TrendingUp, TrendingDown, Shield, Code, FolderOpen, BookOpen } from "lucide-react";
+import { useState, useEffect } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useAuth } from "../../auth";
 import Flag from "react-world-flags";
@@ -37,6 +38,11 @@ export const Route = createFileRoute("/_auth/profile")({
 function RouteComponent() {
   const { userToken, logout } = useAuth();
   const navigation = useNavigate();
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const handleLogout = () => {
     logout();
@@ -279,29 +285,31 @@ function RouteComponent() {
               <div className="text-[9px] font-mono text-primary/50">TOP_5_RANKING</div>
             </div>
             <div className="h-[200px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={skillChartData} layout="vertical" margin={{ left: 0, right: 20, top: 0, bottom: 0 }}>
-                  <XAxis type="number" hide domain={[0, 100]} />
-                  <YAxis
-                    dataKey="name"
-                    type="category"
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fill: "#94a3b8", fontSize: 10, fontFamily: "monospace" }}
-                    width={85}
-                  />
-                  <Tooltip
-                    cursor={{ fill: 'rgba(13, 185, 242, 0.05)' }}
-                    contentStyle={{ backgroundColor: '#020617', borderColor: '#0db9f2', fontSize: '10px' }}
-                  />
-                  <Bar
-                    dataKey="level"
-                    fill="#0db9f2"
-                    radius={[0, 4, 4, 0]}
-                    barSize={12}
-                  />
-                </BarChart>
-              </ResponsiveContainer>
+              {isMounted && (
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={skillChartData} layout="vertical" margin={{ left: 0, right: 20, top: 0, bottom: 0 }}>
+                    <XAxis type="number" hide domain={[0, 100]} />
+                    <YAxis
+                      dataKey="name"
+                      type="category"
+                      axisLine={false}
+                      tickLine={false}
+                      tick={{ fill: "#94a3b8", fontSize: 10, fontFamily: "monospace" }}
+                      width={85}
+                    />
+                    <Tooltip
+                      cursor={{ fill: 'rgba(13, 185, 242, 0.05)' }}
+                      contentStyle={{ backgroundColor: '#020617', borderColor: '#0db9f2', fontSize: '10px' }}
+                    />
+                    <Bar
+                      dataKey="level"
+                      fill="#0db9f2"
+                      radius={[0, 4, 4, 0]}
+                      barSize={12}
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              )}
             </div>
           </DigitalCard>
 
@@ -344,40 +352,42 @@ function RouteComponent() {
               </div>
             </div>
             <div className="flex-1 w-full min-h-[200px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={xpHistory}>
-                  <defs>
-                    <linearGradient id="colorXp" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#0db9f2" stopOpacity={0.4} />
-                      <stop offset="95%" stopColor="#0db9f2" stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid vertical={false} stroke="#1f2937" strokeDasharray="3 3" opacity={0.5} />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: 'rgba(2, 6, 23, 0.95)',
-                      borderColor: '#0db9f2',
-                      fontSize: '11px',
-                      fontFamily: 'monospace',
-                      borderRadius: '4px',
-                      borderWidth: '1px'
-                    }}
-                    itemStyle={{ color: '#0db9f2', padding: 0 }}
-                    labelStyle={{ display: 'none' }}
-                    formatter={(value: any) => [formatBytes(value), 'TOTAL XP']}
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="xp"
-                    stroke="#0db9f2"
-                    strokeWidth={3}
-                    fillOpacity={1}
-                    fill="url(#colorXp)"
-                    animationDuration={2000}
-                    activeDot={{ r: 6, fill: '#0db9f2', stroke: '#fff', strokeWidth: 2 }}
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
+              {isMounted && (
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={xpHistory}>
+                    <defs>
+                      <linearGradient id="colorXp" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#0db9f2" stopOpacity={0.4} />
+                        <stop offset="95%" stopColor="#0db9f2" stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid vertical={false} stroke="#1f2937" strokeDasharray="3 3" opacity={0.5} />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: 'rgba(2, 6, 23, 0.95)',
+                        borderColor: '#0db9f2',
+                        fontSize: '11px',
+                        fontFamily: 'monospace',
+                        borderRadius: '4px',
+                        borderWidth: '1px'
+                      }}
+                      itemStyle={{ color: '#0db9f2', padding: 0 }}
+                      labelStyle={{ display: 'none' }}
+                      formatter={(value: any) => [formatBytes(value), 'TOTAL XP']}
+                    />
+                    <Area
+                      type="monotone"
+                      dataKey="xp"
+                      stroke="#0db9f2"
+                      strokeWidth={3}
+                      fillOpacity={1}
+                      fill="url(#colorXp)"
+                      animationDuration={2000}
+                      activeDot={{ r: 6, fill: '#0db9f2', stroke: '#fff', strokeWidth: 2 }}
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              )}
             </div>
           </DigitalCard>
 
