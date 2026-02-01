@@ -1,6 +1,8 @@
 import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
-import { RouterProvider, createRouter } from "@tanstack/react-router";
+import { RouterProvider, createRouter, createHashHistory } from "@tanstack/react-router";
+
+const hashHistory = createHashHistory();
 
 
 // Import the generated route tree
@@ -16,6 +18,7 @@ import { ThemeProvider } from "./components/theme-provider";
 
 const router = createRouter({
   routeTree,
+  history: hashHistory,
   context: {
     queryClient: undefined!,
     auth: undefined!,
