@@ -313,8 +313,8 @@ function RouteComponent() {
             </div>
           </DigitalCard>
 
-          {/* Quick Actions (Grid) */}
-          <div className="grid grid-cols-2 gap-3">
+          {/* Quick Actions (Desktop Sidebar) */}
+          <div className="hidden lg:grid grid-cols-2 gap-3">
             <button
               onClick={() => navigation({ to: "/projects" })}
               className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-card-dark border border-border/50 hover:border-primary hover:bg-primary/5 transition-all group relative overflow-hidden"
@@ -417,6 +417,27 @@ function RouteComponent() {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Quick Actions (Mobile Bottom) */}
+      <div className="lg:hidden grid grid-cols-2 gap-3 mt-4">
+        <button
+          onClick={() => navigation({ to: "/projects" })}
+          className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-card-dark border border-border/50 hover:border-primary hover:bg-primary/5 transition-all group relative overflow-hidden"
+        >
+          <div className="absolute inset-0 bg-primary/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+          <FolderOpen className="size-6 text-slate-400 group-hover:text-primary transition-colors relative z-10" />
+          <span className="text-[10px] uppercase font-mono tracking-widest text-slate-500 group-hover:text-primary-foreground relative z-10">Projects</span>
+        </button>
+
+        <button
+          onClick={() => navigation({ to: "/skills" })}
+          className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-card-dark border border-border/50 hover:border-primary hover:bg-primary/5 transition-all group relative overflow-hidden"
+        >
+          <div className="absolute inset-0 bg-primary/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+          <BookOpen className="size-6 text-slate-400 group-hover:text-primary transition-colors relative z-10" />
+          <span className="text-[10px] uppercase font-mono tracking-widest text-slate-500 group-hover:text-primary-foreground relative z-10">Skills</span>
+        </button>
       </div>
     </div>
   );
