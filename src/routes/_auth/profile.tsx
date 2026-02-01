@@ -330,13 +330,13 @@ function RouteComponent() {
 
         {/* Right Column: Experience Chart & Activity (2/3 weight) */}
         <div className="flex flex-col gap-6 lg:col-span-2">
-          {/* Digivolution Chart (XP Trend) */}
+          {/* Evolution Chart (XP Trend) */}
           <DigitalCard variant="glass" className="p-6 border-primary/20 bg-primary/5 h-full min-h-[300px] flex flex-col">
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h2 className="text-base font-bold uppercase text-foreground flex items-center gap-2">
                   <span className="w-1.5 h-4 bg-primary rounded-sm shadow-[0_0_8px_rgba(13,185,242,0.5)]"></span>
-                  Digivolution Path
+                  Evolution Path
                 </h2>
                 <p className="text-[10px] text-slate-500 font-mono mt-1 font-normal tracking-wide uppercase">EXPONENTIAL GROWTH ANALYTICS</p>
               </div>
