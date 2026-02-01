@@ -20,7 +20,6 @@ import {
 } from "recharts";
 import { ModeToggle } from "@/components/mode-toggle";
 import { ArrowLeft, BookOpen, Star } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_auth/skills")({
   component: SkillsRoute,

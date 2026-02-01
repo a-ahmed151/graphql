@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { DigitalCard } from "@/components/DigitalCard";
 import { LogOut, Zap, TrendingUp, TrendingDown, Shield, Code, FolderOpen, BookOpen } from "lucide-react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";

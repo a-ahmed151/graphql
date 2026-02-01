@@ -61,6 +61,8 @@
     "react-resizable-panels": "^4.5.4",
     "react-world-flags": "^1.6.0",
     "recharts": "2.15.4",
+    "separator": "^0.1.0",
+    "shadcn": "^3.8.1",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.0.2",
     "tailwindcss": "^4.0.6",

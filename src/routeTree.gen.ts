@@ -14,7 +14,6 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthSkillsRouteImport } from './routes/_auth/skills'
 import { Route as AuthProjectsRouteImport } from './routes/_auth/projects'
 import { Route as AuthProfileRouteImport } from './routes/_auth/profile'
-import { Route as AuthDashboardRouteImport } from './routes/_auth/dashboard'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/_auth',
@@ -40,22 +39,15 @@ const AuthProfileRoute = AuthProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => AuthRoute,
 } as any)
-const AuthDashboardRoute = AuthDashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => AuthRoute,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/dashboard': typeof AuthDashboardRoute
   '/profile': typeof AuthProfileRoute
   '/projects': typeof AuthProjectsRoute
   '/skills': typeof AuthSkillsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/dashboard': typeof AuthDashboardRoute
   '/profile': typeof AuthProfileRoute
   '/projects': typeof AuthProjectsRoute
   '/skills': typeof AuthSkillsRoute
@@ -64,21 +56,19 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_auth': typeof AuthRouteWithChildren
-  '/_auth/dashboard': typeof AuthDashboardRoute
   '/_auth/profile': typeof AuthProfileRoute
   '/_auth/projects': typeof AuthProjectsRoute
   '/_auth/skills': typeof AuthSkillsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboard' | '/profile' | '/projects' | '/skills'
+  fullPaths: '/' | '/profile' | '/projects' | '/skills'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/profile' | '/projects' | '/skills'
+  to: '/' | '/profile' | '/projects' | '/skills'
   id:
     | '__root__'
     | '/'
     | '/_auth'
-    | '/_auth/dashboard'
     | '/_auth/profile'
     | '/_auth/projects'
     | '/_auth/skills'
@@ -126,25 +116,16 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthProfileRouteImport
       parentRoute: typeof AuthRoute
     }
-    '/_auth/dashboard': {
-      id: '/_auth/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof AuthDashboardRouteImport
-      parentRoute: typeof AuthRoute
-    }
   }
 }
 
 interface AuthRouteChildren {
-  AuthDashboardRoute: typeof AuthDashboardRoute
   AuthProfileRoute: typeof AuthProfileRoute
   AuthProjectsRoute: typeof AuthProjectsRoute
   AuthSkillsRoute: typeof AuthSkillsRoute
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
-  AuthDashboardRoute: AuthDashboardRoute,
   AuthProfileRoute: AuthProfileRoute,
   AuthProjectsRoute: AuthProjectsRoute,
   AuthSkillsRoute: AuthSkillsRoute,
