@@ -5,13 +5,20 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export const formatBytes = (bytes:number, decimals = 0) => {
-    if (bytes === 0) return '0 Bytes';
+export const formatBytes = (bytes: number) => {
+  if (bytes === 0) return '0 Bytes';
 
-    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-    // Calculate the correct unit index using logarithms
-    const i = Math.floor(Math.log(bytes) / Math.log(1000));
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(1000));
 
-    // Format the value to the specified number of decimals and append the unit
-    return `${parseFloat((bytes / Math.pow(1000, i)).toFixed(decimals))} ${sizes[i]}`;
+  // Convert to the appropriate unit
+  const value = bytes / Math.pow(1000, i);
+
+  // Use toPrecision(3) to keep exactly 3 significant digits
+  // This handles "round if more" (1234 -> 1.23k) and "add fractions if less" (1.2 -> 1.20k)
+  // Note: for very small numbers (e.g. 10 Bytes), 10.0 might be desired or just 10.
+  // The user said "if it has less add fractions", implying 12 -> 12.0.
+  const formattedValue = value.toPrecision(3);
+
+  return `${formattedValue} ${sizes[i]}`;
 };

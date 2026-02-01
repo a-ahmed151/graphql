@@ -10,6 +10,7 @@ import "./styles.css";
 import reportWebVitals from "./reportWebVitals.ts";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider, useAuth } from "./auth.tsx";
+import { ThemeProvider } from "./components/theme-provider";
 
 // Create a new router instance
 
@@ -41,7 +42,7 @@ const queryClient = new QueryClient({
 
 const InnerApp = () => {
   const auth = useAuth()
-  
+
   return (
     <RouterProvider
       router={router}
@@ -61,7 +62,9 @@ if (rootElement && !rootElement.innerHTML) {
     <StrictMode>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
-        <InnerApp />
+          <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+            <InnerApp />
+          </ThemeProvider>
         </AuthProvider>
       </QueryClientProvider>
     </StrictMode>,

@@ -17304,6 +17304,7 @@ export type UserXpAndLevelQuery = { __typename?: 'query_root', xp: { __typename?
 export type ProjectXpTransactionsQueryVariables = Exact<{
   userId: Scalars['Int']['input'];
   eventId: Scalars['Int']['input'];
+  limit?: InputMaybe<Scalars['Int']['input']>;
 }>;
 
 
@@ -17418,11 +17419,11 @@ export const UserXpAndLevelDocument = new TypedDocumentString(`
 }
     `) as unknown as TypedDocumentString<UserXpAndLevelQuery, UserXpAndLevelQueryVariables>;
 export const ProjectXpTransactionsDocument = new TypedDocumentString(`
-    query ProjectXpTransactions($userId: Int!, $eventId: Int!) {
+    query ProjectXpTransactions($userId: Int!, $eventId: Int!, $limit: Int) {
   transaction(
     where: {userId: {_eq: $userId}, type: {_eq: "xp"}, eventId: {_eq: $eventId}}
     order_by: {createdAt: desc}
-    limit: 5
+    limit: $limit
   ) {
     id
     amount
