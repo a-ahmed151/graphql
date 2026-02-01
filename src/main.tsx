@@ -9,7 +9,7 @@ const hashHistory = createHashHistory();
 import { routeTree } from "./routeTree.gen";
 
 import "./styles.css";
-import reportWebVitals from "./reportWebVitals.ts";
+import reportWebVitals from "./reportWebVitals";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider, useAuth } from "./auth";
 import { ThemeProvider } from "./components/theme-provider";

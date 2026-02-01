@@ -284,9 +284,9 @@ function RouteComponent() {
               </h3>
               <div className="text-[9px] font-mono text-primary/50">TOP_5_RANKING</div>
             </div>
-            <div className="h-[200px] w-full">
+            <div className="h-[200px] w-full relative">
               {isMounted && (
-                <ResponsiveContainer width="100%" height="100%">
+                <ResponsiveContainer width="100%" aspect={1.5}>
                   <BarChart data={skillChartData} layout="vertical" margin={{ left: 0, right: 20, top: 0, bottom: 0 }}>
                     <XAxis type="number" hide domain={[0, 100]} />
                     <YAxis
@@ -351,9 +351,9 @@ function RouteComponent() {
                 <span className="text-[10px] text-primary font-mono font-bold tracking-widest uppercase">XP TRENDLINE</span>
               </div>
             </div>
-            <div className="flex-1 w-full min-h-[200px]">
+            <div className="flex-1 w-full min-h-[250px] relative">
               {isMounted && (
-                <ResponsiveContainer width="100%" height="100%">
+                <ResponsiveContainer width="100%" aspect={2}>
                   <AreaChart data={xpHistory}>
                     <defs>
                       <linearGradient id="colorXp" x1="0" y1="0" x2="0" y2="1">
