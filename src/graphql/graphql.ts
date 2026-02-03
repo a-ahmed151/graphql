@@ -17308,7 +17308,7 @@ export type ProjectXpTransactionsQueryVariables = Exact<{
 }>;
 
 
-export type ProjectXpTransactionsQuery = { __typename?: 'query_root', transaction: Array<{ __typename?: 'transaction', id: number, amount: any, eventId?: number | null, path: string, createdAt: any }> };
+export type ProjectXpTransactionsQuery = { __typename?: 'query_root', transaction: Array<{ __typename?: 'transaction', id: number, amount: any, eventId?: number | null, path: string, createdAt: any, type: string, userLogin?: string | null, progress?: { __typename?: 'progress', group?: { __typename?: 'group', captainLogin?: string | null } | null } | null, object?: { __typename?: 'object', name?: string | null } | null }> };
 
 export type PendingAuditsQueryVariables = Exact<{
   userId: Scalars['Int']['input'];
@@ -17320,12 +17320,13 @@ export type PendingAuditsQuery = { __typename?: 'query_root', audit: Array<{ __t
 
 export class TypedDocumentString<TResult, TVariables>
   extends String
-  implements DocumentTypeDecoration<TResult, TVariables> {
+  implements DocumentTypeDecoration<TResult, TVariables>
+{
   __apiType?: NonNullable<DocumentTypeDecoration<TResult, TVariables>['__apiType']>;
   private value: string;
-  public __meta__?: globalThis.Record<string, any> | undefined;
+  public __meta__?: Record<string, any> | undefined;
 
-  constructor(value: string, __meta__?: globalThis.Record<string, any> | undefined) {
+  constructor(value: string, __meta__?: Record<string, any> | undefined) {
     super(value);
     this.value = value;
     this.__meta__ = __meta__;
@@ -17420,7 +17421,7 @@ export const UserXpAndLevelDocument = new TypedDocumentString(`
 export const ProjectXpTransactionsDocument = new TypedDocumentString(`
     query ProjectXpTransactions($userId: Int!, $eventId: Int!, $limit: Int) {
   transaction(
-    where: {userId: {_eq: $userId}, type: {_eq: "xp"}, eventId: {_eq: $eventId}}
+    where: {_and: [{userId: {_eq: $userId}}, {type: {_eq: "xp"}}, {eventId: {_eq: $eventId}}]}
     order_by: {createdAt: desc}
     limit: $limit
   ) {
@@ -17429,6 +17430,16 @@ export const ProjectXpTransactionsDocument = new TypedDocumentString(`
     eventId
     path
     createdAt
+    type
+    userLogin
+    progress {
+      group {
+        captainLogin
+      }
+    }
+    object {
+      name
+    }
   }
 }
     `) as unknown as TypedDocumentString<ProjectXpTransactionsQuery, ProjectXpTransactionsQueryVariables>;

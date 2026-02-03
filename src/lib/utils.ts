@@ -22,3 +22,7 @@ export const formatBytes = (bytes: number) => {
 
   return `${formattedValue} ${sizes[i]}`;
 };
+
+export const linkToProject = (proj: any) => {
+  return `https://learn.reboot01.com/intra/bahrain/bh-module/${proj.path.trim().split('/').pop()}`;
+}

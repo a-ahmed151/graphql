@@ -83,8 +83,8 @@ export const UserXpAndLevelQuery = graphql(`query UserXpAndLevel($userId: Int!, 
 
 export const UserProjectProgressQuery = graphql(`query ProjectXpTransactions($userId: Int!, $eventId: Int!, $limit: Int) {
   transaction(
-    where: { userId: { _eq: $userId }, type: { _eq: "xp" }, eventId: { _eq: $eventId } }
-    order_by: { createdAt: desc }   # newest first
+    where: {_and: [{userId: {_eq: $userId}}, {type: {_eq: "xp"}}, {eventId: {_eq: $eventId}}]}
+    order_by: {createdAt: desc}
     limit: $limit
   ) {
     id
@@ -92,6 +92,16 @@ export const UserProjectProgressQuery = graphql(`query ProjectXpTransactions($us
     eventId
     path
     createdAt
+    type
+    userLogin
+    progress {
+      group {
+        captainLogin
+      }
+    }
+    object{
+      name
+    }
   }
 }
 `)

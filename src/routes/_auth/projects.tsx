@@ -12,7 +12,7 @@ import { useQuery } from "@tanstack/react-query";
 import request from "graphql-request";
 import { ModeToggle } from "@/components/mode-toggle";
 import { ArrowLeft, FolderOpen, CheckCircle, Code } from "lucide-react";
-import { formatBytes } from "@/lib/utils";
+import { formatBytes, linkToProject } from "@/lib/utils";
 
 export const Route = createFileRoute("/_auth/projects")({
     component: ProjectsRoute,
@@ -132,9 +132,9 @@ function ProjectsRoute() {
                                         <div className="w-1.5 h-1.5 rounded-full bg-primary/30"></div>
                                         <div className="w-1.5 h-1.5 rounded-full bg-primary/10"></div>
                                     </div>
-                                    <button className="text-[9px] font-mono text-slate-400 group-hover:text-primary transition-colors flex items-center gap-1">
+                                    <a href={linkToProject(proj)} target="_blank" className="text-[9px] font-mono text-slate-400 group-hover:text-primary transition-colors flex items-center gap-1">
                                         VIEW_DETAILS <ArrowLeft className="size-2 rotate-180" />
-                                    </button>
+                                    </a>
                                 </div>
                             </div>
                         </DigitalCard>
