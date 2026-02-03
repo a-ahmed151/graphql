@@ -17320,13 +17320,12 @@ export type PendingAuditsQuery = { __typename?: 'query_root', audit: Array<{ __t
 
 export class TypedDocumentString<TResult, TVariables>
   extends String
-  implements DocumentTypeDecoration<TResult, TVariables>
-{
+  implements DocumentTypeDecoration<TResult, TVariables> {
   __apiType?: NonNullable<DocumentTypeDecoration<TResult, TVariables>['__apiType']>;
   private value: string;
-  public __meta__?: Record<string, any> | undefined;
+  public __meta__?: globalThis.Record<string, any> | undefined;
 
-  constructor(value: string, __meta__?: Record<string, any> | undefined) {
+  constructor(value: string, __meta__?: globalThis.Record<string, any> | undefined) {
     super(value);
     this.value = value;
     this.__meta__ = __meta__;
